@@ -3,14 +3,17 @@ import os
 
 import requests
 
+from utils import timer
+
 
 def scrape(url):
-    print("Worker process id for {0}: {1}".format(url, os.getpid()))
+    print("process id for {0}: {1}".format(url, os.getpid()))
     response = requests.get(url)
     return response.content[:10]
 
 
-if __name__ == '__main__':
+@timer
+def main():
     urls = [
         'https://realpython.com/',
         'https://realpython.com/learning-paths/',
@@ -29,6 +32,10 @@ if __name__ == '__main__':
         'https://realpython.com/python-string-formatting/'
 
     ]
-    pool = multiprocessing.Pool()
+    pool = multiprocessing.Pool(6)
     result = pool.map(scrape, urls)
     print(result)
+
+
+if __name__ == '__main__':
+    main()

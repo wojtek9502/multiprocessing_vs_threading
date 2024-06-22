@@ -1,19 +1,23 @@
 import concurrent.futures
 import os
+import time
 
 import requests
 
-ARRAY_ELEMS = 100_00
+from utils import timer
+
+ARRAY_ELEMS = 10_000
 N_THREADS = 6
 
 
 def calc(url):
-    print("Worker process id for {0}: {1}".format(url, os.getpid()))
+    print("process id for {0}: {1}".format(url, os.getpid()))
     response = requests.get(url)
     return response.content[:10]
 
 
-if __name__ == '__main__':
+@timer
+def main():
     urls = [
         'https://realpython.com/',
         'https://realpython.com/learning-paths/',
@@ -32,8 +36,12 @@ if __name__ == '__main__':
         'https://realpython.com/python-string-formatting/'
 
     ]
-    with concurrent.futures.ProcessPoolExecutor() as executor:
+    with concurrent.futures.ThreadPoolExecutor() as executor:
         results = executor.map(calc, urls)
 
     for res in results:
         print(res)
+
+
+if __name__ == '__main__':
+    main()

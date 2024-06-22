@@ -1,22 +1,23 @@
-import multiprocessing
 import os
 import threading
 
 import numpy as np
 
-ARRAY_ELEMS = 100_00
-N_THREADS = 6
+from utils import timer
+
+ARRAY_ELEMS = 10_000
+N_THREADS = 3
 
 
 def calc(numpy_arr):
-    print("Worker process id for {0}: {1}".format(numpy_arr, os.getpid()))
+    print("process id: {0}".format(os.getpid()))
     for i in range(ARRAY_ELEMS):
         a = np.dot(numpy_arr, numpy_arr)
         return a
 
 
-if __name__ == '__main__':
-    arrays = []
+@timer
+def main():
     threads = []
     origin_array = np.random.rand(ARRAY_ELEMS, ARRAY_ELEMS)
     for i in range(N_THREADS):
@@ -27,3 +28,7 @@ if __name__ == '__main__':
 
     for t in threads:
         t.join()
+
+
+if __name__ == '__main__':
+    main()
